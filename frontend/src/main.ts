@@ -10,6 +10,7 @@ import type {
 } from "./types";
 import { api } from "./api";
 import "./styles.css";
+import { hasEntityDashboard, openEntityDashboard } from "./entity-modal";
 
 // ── State ────────────────────────────────────────────────────────────────────
 let globeInstance: ReturnType<typeof Globe> | null = null;
@@ -178,6 +179,7 @@ function renderDashboard(c: CountryDetail): void {
       <small>Risk</small>
     </div>
   `;
+  
 
   // KPI grid
   const kpiData = [
@@ -213,6 +215,30 @@ function renderDashboard(c: CountryDetail): void {
   document.getElementById("country-narrative")!.innerHTML = `
     <p>${c.narrative}</p>
   `;
+
+  const existingBtn = document.getElementById("entity-deep-dive-btn");
+  if (existingBtn) existingBtn.remove();
+  if (hasEntityDashboard(c.iso2)) {
+    const entityBtn = document.createElement("button");
+    entityBtn.id = "entity-deep-dive-btn";
+    entityBtn.textContent = "🏢 Open Anchor Entity Dashboard";
+    entityBtn.style.cssText = `
+      display: block;
+      width: 100%;
+      margin: 14px 0 0;
+      padding: 10px 16px;
+      background: rgba(201,151,75,0.12);
+      border: 1px solid rgba(201,151,75,0.5);
+      border-radius: 6px;
+      color: #C9974B;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px;
+      cursor: pointer;
+      text-align: left;
+    `;
+    entityBtn.addEventListener("click", () => openEntityDashboard(c.iso2));
+    document.getElementById("country-narrative")!.appendChild(entityBtn);
+  }
 
   // FX trend badge
   const fxColors: Record<string, string> = {
